@@ -19,7 +19,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 WORKDIR /app
 COPY . /app
-RUN bash ./scripts/download_models.sh
+RUN bash scripts/download_models.sh
 
 
 # Run download_models.sh script (assuming it's in the same directory as Dockerfile)
