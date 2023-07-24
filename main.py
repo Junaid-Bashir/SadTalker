@@ -1,6 +1,6 @@
 import subprocess
 from fastapi import FastAPI
-
+from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 
 def run_inference(driven_audio_path, source_image_path, result_dir='./static'):
