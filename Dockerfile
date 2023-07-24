@@ -17,11 +17,9 @@ WORKDIR /app
 # Copy the requirements.txt file and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-RUN bash scripts/download_models.sh
-# Copy the app.py file to the working directory
 WORKDIR /app
 COPY . /app
-
+RUN bash ./scripts/download_models.sh
 
 
 # Run download_models.sh script (assuming it's in the same directory as Dockerfile)
