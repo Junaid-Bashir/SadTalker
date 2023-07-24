@@ -17,16 +17,16 @@ WORKDIR /app
 # Copy the requirements.txt file and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+RUN bash scripts/download_models.sh
 # Copy the app.py file to the working directory
-COPY app.py .
+WORKDIR /app
+COPY . /app
 
-# Copy checkpoints (assuming it's in the same directory as Dockerfile)
-COPY checkpoints/ ./checkpoints/
+
 
 # Run download_models.sh script (assuming it's in the same directory as Dockerfile)
-COPY scripts/ ./scripts/
-RUN bash scripts/download_models.sh
+
+
 
 # Expose the port on which FastAPI is running (you can modify the port if needed)
 EXPOSE 8000
