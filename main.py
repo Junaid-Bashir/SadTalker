@@ -6,7 +6,7 @@ from gtts import gTTS
 from io import BytesIO
 app = FastAPI()
 
-def run_inference(driven_audio_path, source_image_path, result_dir='static'):
+async def run_inference(driven_audio_path, source_image_path, result_dir='static'):
     try:
         command = f"python inference.py --driven_audio {driven_audio_path} \
                    --source_image {source_image_path} \
@@ -40,7 +40,7 @@ async def call_run_inference(text:str, image: UploadFile = File(...)):
         data.close()
     text_to_audio(text, "static/test.mp3")
 
-    response = run_inference("static/test.mp3", "static/"+name, result_dir='static')
+    response = await run_inference("static/test.mp3", "static/"+name, result_dir='static')
 
     if response is not None:
         return {"response": response.strip().split("\n")[-1].split(":")[-1]}
