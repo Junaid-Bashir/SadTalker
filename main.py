@@ -31,20 +31,18 @@ def text_to_audio(text, audio_path):
 
 @app.get("/run_inference/")
 async def call_run_inference(text:str, image: UploadFile = File(...)):
-    try:
-        # Save the uploaded files to a temporary directory
-        name = image.filename
-        contents = image.file.read()
-        with open("static/"+name,'wb') as data:
-            data.write(contents)
-            data.close()
-        text_to_audio(text, "static/test.mp3")
+    
+    # Save the uploaded files to a temporary directory
+    name = image.filename
+    contents = image.file.read()
+    with open("static/"+name,'wb') as data:
+        data.write(contents)
+        data.close()
+    text_to_audio(text, "static/test.mp3")
 
-        response = run_inference("static/test.mp3", "static/"+name, result_dir='static')
+    response = run_inference("static/test.mp3", "static/"+name, result_dir='static')
 
-        if response is not None:
-            return {"response": response.strip().split("\n")[-1].split(":")[-1]}
-        else:
-            return {"error": "An error occurred during inference or no non-empty lines in the response."}
-    except Exception as e:
-        return {"error": str(e)}
+    if response is not None:
+        return {"response": response.strip().split("\n")[-1].split(":")[-1]}
+    else:
+        return {"error": "An error occurred during inference or no non-empty lines in the response."}
