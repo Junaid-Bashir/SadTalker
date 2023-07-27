@@ -2,9 +2,11 @@ import subprocess
 from fastapi import FastAPI
 from fastapi import FastAPI, UploadFile, File
 from fastapi.staticfiles import StaticFiles
+from gtts import gTTS
+from io import BytesIO
 app = FastAPI()
 
-def run_inference(driven_audio_path, source_image_path, result_dir='./static'):
+def run_inference(driven_audio_path, source_image_path, result_dir='static'):
     try:
         command = f"python inference.py --driven_audio {driven_audio_path} \
                    --source_image {source_image_path} \
@@ -23,23 +25,22 @@ def run_inference(driven_audio_path, source_image_path, result_dir='./static'):
         return None
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-def save_uploaded_file(upload_file: UploadFile, save_path: str):
-    with open(save_path, "wb") as f:
-        f.write(upload_file.file.read())
+def text_to_audio(text, audio_path):
+    tts = gTTS(text=text, lang="en")
+    tts.save(audio_path)
 
 @app.get("/run_inference/")
-async def call_run_inference(driven_audio: UploadFile = File(...), source_image: UploadFile = File(...)):
+async def call_run_inference(text:str, image: UploadFile = File(...)):
     try:
         # Save the uploaded files to a temporary directory
-        temp_dir = "temp_files"
-        os.makedirs(temp_dir, exist_ok=True)
-        driven_audio_path = os.path.join(temp_dir, driven_audio.filename)
-        source_image_path = os.path.join(temp_dir, source_image.filename)
-        
-        save_uploaded_file(driven_audio, driven_audio_path)
-        save_uploaded_file(source_image, source_image_path)
+        name = image.filename
+        contents = image.file.read()
+        with open("static/"+name,'wb') as data:
+            data.write(contents)
+            data.close()
+        text_to_audio(text, "static/test.mp3")
 
-        response = run_inference(driven_audio_path, source_image_path, result_dir)
+        response = run_inference("static/test.mp3", "static/"+name, result_dir='static)
 
         if response is not None:
             return {"response": response.strip().split("\n")[-1].split(":")[-1]}
