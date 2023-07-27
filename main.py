@@ -32,13 +32,13 @@ def text_to_audio(text, audio_path):
 @app.get("/run_inference/")
 async def call_run_inference(text:str, image: UploadFile = File(...)):
     
-    # Save the uploaded files to a temporary directory
-    name = image.filename
-    contents = image.file.read()
-    with open("static/"+name,'wb') as data:
-        data.write(contents)
-        data.close()
-    text_to_audio(text, "static/test.mp3")
+    # # Save the uploaded files to a temporary directory
+    # name = image.filename
+    # contents = image.file.read()
+    # with open("static/"+name,'wb') as data:
+    #     data.write(contents)
+    #     data.close()
+    # text_to_audio(text, "static/test.mp3")
 
     response = await run_inference("static/test.mp3", "static/"+name, result_dir='static')
 
