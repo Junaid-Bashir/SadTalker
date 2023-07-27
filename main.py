@@ -40,7 +40,7 @@ async def call_run_inference(text:str, image: UploadFile = File(...)):
     #     data.close()
     # text_to_audio(text, "static/test.mp3")
 
-    response = await run_inference("static/test.mp3", "static/"+name, result_dir='static')
+    response = await run_inference("static/test.mp3", "static/1669376551115.jpg", result_dir='static')
 
     if response is not None:
         return {"response": response.strip().split("\n")[-1].split(":")[-1]}
