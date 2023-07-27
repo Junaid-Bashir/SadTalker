@@ -1,5 +1,6 @@
 import subprocess
 from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 
@@ -22,10 +23,24 @@ def run_inference(driven_audio_path, source_image_path, result_dir='./static'):
         return None
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+def save_uploaded_file(upload_file: UploadFile, save_path: str):
+    with open(save_path, "wb") as f:
+        f.write(upload_file.file.read())
+
 @app.get("/run_inference/")
-def call_run_inference(driven_audio_path: str, source_image_path: str):
+async def call_run_inference(driven_audio: UploadFile = File(...), source_image: UploadFile = File(...)):
     try:
+        # Save the uploaded files to a temporary directory
+        temp_dir = "temp_files"
+        os.makedirs(temp_dir, exist_ok=True)
+        driven_audio_path = os.path.join(temp_dir, driven_audio.filename)
+        source_image_path = os.path.join(temp_dir, source_image.filename)
+        
+        save_uploaded_file(driven_audio, driven_audio_path)
+        save_uploaded_file(source_image, source_image_path)
+
         response = run_inference(driven_audio_path, source_image_path, result_dir)
+
         if response is not None:
             return {"response": response.strip().split("\n")[-1].split(":")[-1]}
         else:
