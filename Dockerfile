@@ -22,12 +22,5 @@ COPY . /app
 RUN bash scripts/download_models.sh
 
 
-# Run download_models.sh script (assuming it's in the same directory as Dockerfile)
-
-
-
-# Expose the port on which FastAPI is running (you can modify the port if needed)
-EXPOSE 80
-
 # Command to run the FastAPI application using Uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
